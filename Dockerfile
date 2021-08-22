@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+FROM nvidia/cuda:10.1-cudnn7-runtime-ubuntu18.04
 
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends \
@@ -34,6 +34,8 @@ RUN mkdir $HOME && chmod 0777 $HOME
 
 RUN pip3 install pip -U
 RUN pip3 install \
+    black \
+    isort==4.3.21 \
     scikit-learn \
     numpy \
     pandas \
@@ -49,7 +51,11 @@ RUN pip3 install \
     ipdb \
   && rm -rf /root/.cache && rm -rf ${HOME}/.cache
 
-RUN jupyter contrib nbextension install --user \
+RUN jupyter contrib nbextension install --system \
+    && jupyter nbextension install https://github.com/drillan/jupyter-black/archive/master.zip \
+    && jupyter nbextension install https://github.com/benjaminabel/jupyter-isort/archive/master.zip \
+    && jupyter nbextension enable jupyter-black-master/jupyter-black \
+    && jupyter nbextension enable jupyter-isort-master/jupyter-isort \
     && jupyter nbextension enable contrib_nbextensions_help_item/main \
     && jupyter nbextension enable execute_time/ExecuteTime \
     && jupyter nbextension enable freeze/main \
@@ -63,8 +69,3 @@ RUN jupyter contrib nbextension install --user \
 
 RUN pip3 install bash_kernel
 RUN python3 -m bash_kernel.install
-
-RUN chmod -R 0777 ${HOME}/.local ${HOME}/.jupyter
-
-# user
-# RUN chown -R genzitsu $HOME

@@ -2,10 +2,13 @@ version: '3'
 
 services:
   notebook:
+    platform: linux/x86_64
     build:
-      context: .
+      context: ./
       dockerfile: ./Dockerfile
     user: root
+    volumes:
+        - ../:/home/
     environment:
       NB_UID: 1000
       NB_GID: 100
